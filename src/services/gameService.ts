@@ -1,3 +1,45 @@
+import { Game } from '../types';
+
+const MOCK_GAMES: Game[] = [
+  {
+    id: '1',
+    title: 'Cyberpunk 2077',
+    genre: 'RPG',
+    description: 'An open-world, action-adventure story set in Night City.',
+    rating: 4.5,
+    demoAvailable: true,
+  },
+  {
+    id: '2',
+    title: 'Elden Ring',
+    genre: 'Action RPG',
+    description: 'A dark fantasy action-RPG created by FromSoftware.',
+    rating: 4.9,
+    demoAvailable: false,
+  },
+  {
+    id: '3',
+    title: 'Hades II',
+    genre: 'Rogue-like',
+    description: 'Battle beyond the Underworld using dark magic to take on Chronos.',
+    rating: 4.8,
+    demoAvailable: true,
+  },
+];
+
+export const gameService = {
+  getFeaturedGames: async (): Promise<Game[]> => {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(MOCK_GAMES), 300);
+    });
+  },
+
+  getGameById: async (id: string): Promise<Game | undefined> => {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(MOCK_GAMES.find((g) => g.id === id)), 200);
+    });
+  },
+};
 export interface Game {
   id: string;
   title: string;
