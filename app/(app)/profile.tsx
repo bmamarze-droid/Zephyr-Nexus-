@@ -5,6 +5,93 @@ import { useAuth } from '../../src/context/AuthContext';
 import { colors } from '../../src/theme/colors';
 
 export default function ProfileScreen() {
+  const router = useRouter();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    router.replace('/');
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.avatar}>
+          <Text style={styles.avatarText}>
+            {user?.username ? user.username.charAt(0).toUpperCase() : 'Z'}
+          </Text>
+        </View>
+        <Text style={styles.username}>{user?.username || 'Zephyr User'}</Text>
+        <Text style={styles.role}>Gamer & Community Member</Text>
+      </View>
+
+      <View style={styles.menuGroup}>
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => router.push('/(app)/profile/bookmarks')}
+        >
+          <Text style={styles.menuText}>📌 Saved Articles & Bookmarks</Text>
+          <Text style={styles.arrow}>→</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuItem}>
+          <Text style={styles.menuText}>⚙️ Account Settings</Text>
+          <Text style={styles.arrow}>→</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+        <Text style={styles.logoutText}>Log Out</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background, padding: 20 },
+  header: { alignItems: 'center', marginTop: 30, marginBottom: 30 },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  avatarText: { fontSize: 32, fontWeight: 'bold', color: colors.textPrimary },
+  username: { fontSize: 22, fontWeight: 'bold', color: colors.textPrimary },
+  role: { fontSize: 14, color: colors.textSecondary, marginTop: 4 },
+  menuGroup: { gap: 12, marginBottom: 40 },
+  menuItem: {
+    backgroundColor: colors.cardBg,
+    padding: 16,
+    borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.borderColor,
+  },
+  menuText: { fontSize: 16, color: colors.textPrimary, fontWeight: '500' },
+  arrow: { fontSize: 18, color: colors.textSecondary },
+  logoutBtn: {
+    backgroundColor: '#331111',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#882222',
+  },
+  logoutText: { color: '#FF6666', fontWeight: 'bold', fontSize: 16 },
+});
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useAuth } from '../../src/context/AuthContext';
+import { colors } from '../../src/theme/colors';
+
+export default function ProfileScreen() {
   const { user, logout } = useAuth();
   const router = useRouter();
 
