@@ -1,4 +1,112 @@
 import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useAuth } from '../../src/context/AuthContext';
+import { colors } from '../../src/theme/colors';
+
+export default function ProfileScreen() {
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.replace('/');
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Profile 👤</Text>
+      </View>
+
+      {/* User Info Card */}
+      <View style={styles.card}>
+        <View style={styles.avatar}>
+          <Text style={styles.avatarText}>{user?.username?.[0] ?? 'U'}</Text>
+        </View>
+
+        <Text style={styles.username}>{user?.username ?? 'Guest User'}</Text>
+        <Text style={styles.handle}>{user?.handle ?? '@guest'}</Text>
+        <Text style={styles.bio}>{user?.bio ?? 'No bio set.'}</Text>
+      </View>
+
+      {/* Actions */}
+      <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+        <Text style={styles.logoutText}>Log Out</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    padding: 16,
+  },
+  header: {
+    marginTop: 20,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+  },
+  card: {
+    backgroundColor: colors.cardBg,
+    borderRadius: 12,
+    padding: 24,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.borderColor,
+    marginTop: 12,
+  },
+  avatar: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  avatarText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+  },
+  username: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+  },
+  handle: {
+    fontSize: 14,
+    color: colors.accentBlue,
+    marginTop: 2,
+    marginBottom: 8,
+  },
+  bio: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  logoutBtn: {
+    marginTop: 24,
+    backgroundColor: colors.danger,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  logoutText: {
+    color: colors.textPrimary,
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+});
+import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 
 export default function ProfileScreen() {
