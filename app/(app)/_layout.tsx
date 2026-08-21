@@ -1,3 +1,9 @@
+<Tabs.Screen
+  name="profile"
+  options={{
+    title: 'Profile',
+  }}
+/>
 import React from 'react';
 import { Tabs } from 'expo-router';
 
