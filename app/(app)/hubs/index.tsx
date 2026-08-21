@@ -1,3 +1,110 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { storage } from '../../../src/utils/storage';
+import { colors } from '../../../src/theme/colors';
+
+const JOINED_HUBS_KEY = '@zephyr_joined_hubs';
+
+interface Hub {
+  id: string;
+  name: string;
+  category: string;
+  membersCount: number;
+}
+
+const INITIAL_HUBS: Hub[] = [
+  { id: '1', name: 'Open World RPGs', category: 'Adventure', membersCount: 14200 },
+  { id: '2', name: 'FPS & Competitive', category: 'Shooter', membersCount: 28900 },
+  { id: '3', name: 'Indie Game Corner', category: 'Showcase', membersCount: 8400 },
+  { id: '4', name: 'Simulators & Racing', category: 'Driving', membersCount: 11300 },
+];
+
+export default function HubsScreen() {
+  const [joinedHubs, setJoinedHubs] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadJoinedHubs() {
+      const stored = await storage.getItem<string[]>(JOINED_HUBS_KEY);
+      if (stored) setJoinedHubs(stored);
+      setLoading(false);
+    }
+    loadJoinedHubs();
+  }, []);
+
+  const toggleJoinHub = async (id: string) => {
+    const updated = joinedHubs.includes(id)
+      ? joinedHubs.filter((item) => item !== id)
+      : [...joinedHubs, id];
+
+    setJoinedHubs(updated);
+    await storage.setItem(JOINED_HUBS_KEY, updated);
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Community Hubs 💬</Text>
+        <Text style={styles.subtitle}>Join discussion channels for your favorite genres</Text>
+      </View>
+
+      {loading ? (
+        <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
+      ) : (
+        <FlatList
+          data={INITIAL_HUBS}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
+            const isJoined = joinedHubs.includes(item.id);
+            return (
+              <View style={styles.card}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.hubName}>{item.name}</Text>
+                  <Text style={styles.category}>{item.category} • {item.membersCount.toLocaleString()} members</Text>
+                </View>
+
+                <TouchableOpacity
+                  style={[styles.joinBtn, isJoined && styles.joinedBtn]}
+                  onPress={() => toggleJoinHub(item.id)}
+                >
+                  <Text style={styles.joinBtnText}>{isJoined ? 'Joined ✓' : 'Join'}</Text>
+                </TouchableOpacity>
+              </View>
+            );
+          }}
+          contentContainerStyle={styles.list}
+        />
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background, padding: 16 },
+  header: { marginTop: 20, marginBottom: 16 },
+  title: { fontSize: 28, fontWeight: 'bold', color: colors.textPrimary },
+  subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 4 },
+  list: { gap: 12, paddingBottom: 24 },
+  card: {
+    backgroundColor: colors.cardBg,
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.borderColor,
+  },
+  hubName: { fontSize: 16, fontWeight: 'bold', color: colors.textPrimary },
+  category: { fontSize: 12, color: colors.textSecondary, marginTop: 4 },
+  joinBtn: {
+    backgroundColor: colors.primary,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  joinedBtn: { backgroundColor: colors.borderColor },
+  joinBtnText: { color: colors.textPrimary, fontSize: 12, fontWeight: 'bold' },
+});
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
