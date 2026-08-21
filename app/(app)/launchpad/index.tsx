@@ -1,3 +1,106 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { gameService } from '../../../src/services/gameService';
+import { Game } from '../../../src/types';
+import { storage } from '../../../src/utils/storage';
+import { colors } from '../../../src/theme/colors';
+
+const SAVED_DEMOS_KEY = '@zephyr_saved_demos';
+
+export default function LaunchpadScreen() {
+  const [demos, setDemos] = useState<Game[]>([]);
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function initLaunchpad() {
+      const allGames = await gameService.getFeaturedGames();
+      setDemos(allGames.filter((g) => g.demoAvailable));
+
+      const storedSaved = await storage.getItem<string[]>(SAVED_DEMOS_KEY);
+      if (storedSaved) setSavedIds(storedSaved);
+
+      setLoading(false);
+    }
+    initLaunchpad();
+  }, []);
+
+  const toggleSaveDemo = async (id: string) => {
+    const updated = savedIds.includes(id)
+      ? savedIds.filter((item) => item !== id)
+      : [...savedIds, id];
+
+    setSavedIds(updated);
+    await storage.setItem(SAVED_DEMOS_KEY, updated);
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Launchpad 🚀</Text>
+        <Text style={styles.subtitle}>Test early access playtest demos</Text>
+      </View>
+
+      {loading ? (
+        <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
+      ) : (
+        <FlatList
+          data={demos}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
+            const isSaved = savedIds.includes(item.id);
+            return (
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>{item.title}</Text>
+                <Text style={styles.genre}>{item.genre}</Text>
+                <Text style={styles.desc}>{item.description}</Text>
+
+                <View style={styles.footer}>
+                  <TouchableOpacity
+                    style={[styles.saveBtn, isSaved && styles.savedBtn]}
+                    onPress={() => toggleSaveDemo(item.id)}
+                  >
+                    <Text style={styles.saveBtnText}>
+                      {isSaved ? '★ Saved to Library' : '☆ Save Demo'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            );
+          }}
+          contentContainerStyle={styles.list}
+        />
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background, padding: 16 },
+  header: { marginTop: 20, marginBottom: 16 },
+  title: { fontSize: 28, fontWeight: 'bold', color: colors.textPrimary },
+  subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 4 },
+  list: { gap: 16, paddingBottom: 24 },
+  card: {
+    backgroundColor: colors.cardBg,
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.borderColor,
+  },
+  cardTitle: { fontSize: 18, fontWeight: 'bold', color: colors.textPrimary },
+  genre: { fontSize: 12, color: colors.accentBlue, marginTop: 2, marginBottom: 8 },
+  desc: { fontSize: 14, color: '#ccc', lineHeight: 18 },
+  footer: { marginTop: 14, alignItems: 'flex-start' },
+  saveBtn: {
+    backgroundColor: colors.borderColor,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+  },
+  savedBtn: { backgroundColor: colors.primary },
+  saveBtnText: { color: colors.textPrimary, fontSize: 12, fontWeight: 'bold' },
+});
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 
