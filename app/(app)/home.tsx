@@ -1,4 +1,61 @@
 import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
+import { gameService } from '../../src/services/gameService';
+import { Game } from '../../src/types';
+import { GameCard } from '../../src/components/GameCard';
+import { colors } from '../../src/theme/colors';
+
+export default function HomeScreen() {
+  const router = useRouter();
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadGames() {
+      const data = await gameService.getFeaturedGames();
+      setGames(data);
+      setLoading(false);
+    }
+    loadGames();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Zephyr Feed ⚡</Text>
+        <Text style={styles.subtitle}>Latest releases, reviews & breaking news</Text>
+      </View>
+
+      {loading ? (
+        <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
+      ) : (
+        <FlatList
+          data={games}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => router.push(`/(app)/news/${item.id}`)}
+            >
+              <GameCard game={item} />
+            </TouchableOpacity>
+          )}
+          contentContainerStyle={styles.list}
+        />
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background, padding: 16 },
+  header: { marginTop: 20, marginBottom: 16 },
+  title: { fontSize: 28, fontWeight: 'bold', color: colors.textPrimary },
+  subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 4 },
+  list: { gap: 16, paddingBottom: 24 },
+});
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { gameService, Game } from '../../src/services/gameService';
 import { GameCard } from '../../src/components/GameCard';
