@@ -1,4 +1,5 @@
 import { Game } from '../types';
+import { Game } from '../types';
 
 const MOCK_GAMES: Game[] = [
   {
@@ -87,4 +88,6 @@ export const getGames = (): Game[] => GAMES_DATA;
 export const getGameById = (id: string): Game | undefined => {
   return GAMES_DATA.find((game) => game.id === id);
 };
+
+import { Game } from '../types';
 

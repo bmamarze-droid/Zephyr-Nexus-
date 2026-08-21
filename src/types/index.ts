@@ -2,6 +2,15 @@ export interface Game {
   id: string;
   title: string;
   genre: string;
+  rating: number;
+  reviewsCount?: string;
+  image?: string;
+  description?: string;
+}
+export interface Game {
+  id: string;
+  title: string;
+  genre: string;
   description: string;
   rating: number;
   imageUrl?: string;
@@ -30,5 +39,23 @@ export interface UserProfile {
   handle: string;
   avatarUrl?: string;
   bio: string;
+}
+
+export interface Game {
+  id: string;
+  title: string;
+  genre: string;
+  rating: number;
+  reviewsCount?: string;
+  tags?: string[];
+  image?: string;
+  description?: string;
+}
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  avatarUrl?: string;
 }
 
