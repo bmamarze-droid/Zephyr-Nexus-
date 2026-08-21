@@ -1,3 +1,178 @@
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+
+interface DemoItem {
+  id: string;
+  title: string;
+  developer: string;
+  genre: string;
+  status: 'Playable' | 'Upcoming';
+  size: string;
+}
+
+const DEMOS_DATA: DemoItem[] = [
+  {
+    id: '1',
+    title: 'Cyber Odyssey: Tactical Demo',
+    developer: 'Aether Studios',
+    genre: 'Sci-Fi Action',
+    status: 'Playable',
+    size: '142 MB',
+  },
+  {
+    id: '2',
+    title: 'Neon Drift: Time Trial',
+    developer: 'Vapor Dynamics',
+    genre: 'Arcade Racing',
+    status: 'Playable',
+    size: '88 MB',
+  },
+  {
+    id: '3',
+    title: 'Project Zephyr Engine Test',
+    developer: 'Zephyr Labs',
+    genre: 'Sandbox / Physics',
+    status: 'Upcoming',
+    size: '210 MB',
+  },
+];
+
+export default function LaunchpadScreen() {
+  const [demos] = useState<DemoItem[]>(DEMOS_DATA);
+
+  const handleLaunchDemo = (item: DemoItem) => {
+    if (item.status === 'Upcoming') {
+      Alert.alert('Coming Soon', `${item.title} demo is currently in early testing.`);
+    } else {
+      Alert.alert('Launching Demo', `Starting runtime for ${item.title}...`);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Launchpad 🚀</Text>
+        <Text style={styles.subtitle}>Test instant game demos and early access prototypes</Text>
+      </View>
+
+      {/* Demo List */}
+      <FlatList
+        data={demos}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.cardTitle}>{item.title}</Text>
+              <View style={[styles.badge, item.status === 'Playable' ? styles.badgePlayable : styles.badgeUpcoming]}>
+                <Text style={styles.badgeText}>{item.status}</Text>
+              </View>
+            </View>
+
+            <Text style={styles.developer}>{item.developer} • {item.genre}</Text>
+            <Text style={styles.sizeText}>Download Size: {item.size}</Text>
+
+            <TouchableOpacity
+              style={[styles.launchButton, item.status === 'Upcoming' && styles.disabledButton]}
+              onPress={() => handleLaunchDemo(item)}
+            >
+              <Text style={styles.launchButtonText}>
+                {item.status === 'Playable' ? 'Launch Instant Demo' : 'Pre-register Test'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        contentContainerStyle={styles.listContainer}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0f0f14',
+    padding: 16,
+  },
+  header: {
+    marginTop: 20,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#a0a0ab',
+    marginTop: 4,
+  },
+  listContainer: {
+    gap: 16,
+    paddingBottom: 24,
+  },
+  card: {
+    backgroundColor: '#181820',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#23232e',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    flex: 1,
+    marginRight: 8,
+  },
+  badge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  badgePlayable: {
+    backgroundColor: 'rgba(46, 204, 113, 0.2)',
+  },
+  badgeUpcoming: {
+    backgroundColor: 'rgba(241, 196, 15, 0.2)',
+  },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#2ecc71',
+  },
+  developer: {
+    fontSize: 13,
+    color: '#89b4fa',
+    marginTop: 4,
+  },
+  sizeText: {
+    fontSize: 12,
+    color: '#a0a0ab',
+    marginTop: 8,
+    marginBottom: 14,
+  },
+  launchButton: {
+    backgroundColor: '#6c5ce7',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#333344',
+  },
+  launchButtonText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+});
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
