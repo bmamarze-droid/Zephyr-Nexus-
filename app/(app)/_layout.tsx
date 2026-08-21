@@ -1,3 +1,31 @@
+import React from 'react';
+import { Tabs } from 'expo-router';
+import { colors } from '../../src/theme/colors';
+
+export default function AppLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: colors.cardBg,
+          borderTopColor: colors.borderColor,
+          height: 60,
+          paddingBottom: 8,
+        },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
+      }}
+    >
+      <Tabs.Screen name="home" options={{ title: 'Home' }} />
+      <Tabs.Screen name="launchpad/index" options={{ title: 'Launchpad' }} />
+      <Tabs.Screen name="hubs/index" options={{ title: 'Hubs' }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+      <Tabs.Screen name="game/[id]" options={{ href: null }} />
+      <Tabs.Screen name="hubs/[slug]" options={{ href: null }} />
+    </Tabs>
+  );
+}
 <Tabs.Screen
   name="profile"
   options={{
